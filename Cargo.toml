@@ -1,0 +1,11 @@
+[package]
+name = "jvfmt-test"
+version = "0.1.0"
+edition = "2024"
+
+[dependencies]
+fmtrunner = { path = "../fmtrunner" }
+serde = { version = "1.0", features = ["derive"] }
+tree-sitter = "0.25.9"
+tree-sitter-java = "0.23.5"
+itertools = "0.14.0"
