@@ -9,15 +9,13 @@ use tree_sitter::Node;
 
 pub struct ImportsPass;
 
-#[derive(Debug, PartialEq, Eq)]
+#[derive(Debug)]
 pub struct Import {
-    /// full (normalized) content including trailing semicolon
     content: String,
-    /// group of import
     group: ImportGroup,
 }
 
-#[derive(Debug, PartialEq, Eq, PartialOrd, Ord, Clone, Copy)]
+#[derive(Debug, PartialEq, Eq, PartialOrd, Ord, Copy, Clone)]
 enum ImportGroup {
     NonJava,
     JavaCore,
@@ -26,23 +24,26 @@ enum ImportGroup {
 
 impl Import {
     fn new(raw: &str) -> Self {
-        let norm_content = normalize(raw);
-        Self {
-            content: norm_content.clone(),
-            group: Self::group(&norm_content),
-        }
-    }
-
-    fn group(content: &str) -> ImportGroup {
-        if content.contains(" static ") {
+        let content = normalize(raw);
+        let group = if content.contains(" static ") {
             ImportGroup::Static
         } else if content.contains(" java.") {
             ImportGroup::JavaCore
         } else {
             ImportGroup::NonJava
-        }
+        };
+
+        Self { content, group }
     }
 }
+
+impl PartialEq for Import {
+    fn eq(&self, other: &Self) -> bool {
+        self.content == other.content
+    }
+}
+
+impl Eq for Import {}
 
 impl PartialOrd for Import {
     fn partial_cmp(&self, other: &Self) -> Option<Ordering> {
@@ -66,13 +67,11 @@ where
 
     fn find_targets(&self, root: &Node, source: &str) -> Vec<EditTarget<Self::Item>> {
         let mut cursor = root.walk();
-        let mut ranges = Vec::new();
-
-        for child in root.children(&mut cursor) {
-            if child.kind() == "import_declaration" {
-                ranges.push((child.start_byte(), child.end_byte()));
-            }
-        }
+        let ranges: Vec<_> = root
+            .children(&mut cursor)
+            .filter(|child| child.kind() == "import_declaration")
+            .map(|child| (child.start_byte(), child.end_byte()))
+            .collect();
 
         if ranges.is_empty() {
             return Vec::new();
@@ -102,16 +101,16 @@ where
 
     fn build(&self, imports: &[Self::Item]) -> String {
         let mut result = Vec::new();
-        let mut current_group = imports.first().map(|imp| imp.group);
+        let mut prev_group = None;
 
         for imp in imports {
-            if let Some(group) = current_group {
+            if let Some(group) = prev_group {
                 if imp.group != group {
                     result.push(String::new());
-                    current_group = Some(imp.group);
                 }
             }
             result.push(imp.content.clone());
+            prev_group = Some(imp.group);
         }
 
         result.join("\n")
