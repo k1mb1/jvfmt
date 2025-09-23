@@ -1,5 +1,5 @@
-use fmtrunner::parser::LanguageProvider;
-use fmtrunner::supported_extension::SupportedExtension;
+use fmt_runner::parser::LanguageProvider;
+use fmt_runner::supported_extension::SupportedExtension;
 use tree_sitter::Language;
 use tree_sitter_java::LANGUAGE;
 

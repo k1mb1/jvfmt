@@ -5,15 +5,15 @@ mod rule;
 
 use crate::config::Config;
 use crate::java_parser::Java;
-use crate::rule::PackagePass;
-use fmtrunner::cli::handle_cli;
-use fmtrunner::pipeline::Pipeline;
+use crate::rule::{ImportsPass, PackagePass};
+use fmt_runner::cli::handle_cli;
+use fmt_runner::pipeline::Pipeline;
 
 
 fn main() {
-
-    let mut pipeline = Pipeline::new();
+    let mut pipeline = Pipeline::<Config>::new();
     pipeline.add_pass(PackagePass);
+    pipeline.add_pass(ImportsPass);
 
     handle_cli::<Java, Config>(pipeline);
 }

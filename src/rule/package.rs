@@ -1,12 +1,9 @@
-use fmtrunner::pipeline::{EditTarget, StructuredPass};
-use itertools::Itertools;
+use crate::rule::utils::normalize;
+use fmt_runner::pipeline::{EditTarget, StructuredPass};
 use serde::{Deserialize, Serialize};
+use serde::de::DeserializeOwned;
 use tree_sitter::Node;
 
-
-pub fn normalize(raw: &str) -> String {
-    raw.split_whitespace().join(" ").replace(" ;", ";")
-}
 
 pub struct PackagePass;
 
@@ -22,13 +19,13 @@ impl Package {
     }
 }
 
-impl<C> StructuredPass<C> for PackagePass
+impl<Config> StructuredPass<Config> for PackagePass
 where
-    C: Serialize + for<'a> Deserialize<'a>,
+    Config: Serialize + DeserializeOwned
 {
     type Item = Package;
 
-    fn find_targets(&self, root: &Node, source: &String) -> Vec<EditTarget<Self::Item>> {
+    fn find_targets(&self, root: &Node, source: &str) -> Vec<EditTarget<Self::Item>> {
         let mut targets = Vec::new();
         let mut cursor = root.walk();
 
