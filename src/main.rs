@@ -12,8 +12,8 @@ use fmt_runner::pipeline::Pipeline;
 
 fn main() {
     let mut pipeline = Pipeline::new();
-    pipeline.add_pass(PackagePass);
-    pipeline.add_pass(ImportsPass);
+    pipeline.add_pass(PackagePass::new());
+    pipeline.add_pass(ImportsPass::new());
 
     handle_cli::<Java, Config>(pipeline);
 }

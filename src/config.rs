@@ -1,7 +1,7 @@
 use serde::{Deserialize, Serialize};
 
 
-#[derive(Debug, Serialize, Deserialize, Clone, Copy)]
+#[derive(Debug, Serialize, Deserialize, Clone, Copy, Default)]
 #[serde(default, deny_unknown_fields)]
 pub struct Config {
     pub import: ImportConfig,
@@ -11,14 +11,6 @@ pub struct Config {
 #[serde(default, deny_unknown_fields)]
 pub struct ImportConfig {
     pub sort: bool,
-}
-
-impl Default for Config {
-    fn default() -> Config {
-        Self {
-            import: ImportConfig::default(),
-        }
-    }
 }
 
 impl Default for ImportConfig {

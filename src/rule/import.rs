@@ -1,13 +1,23 @@
 use crate::config::ImportConfigProvider;
 use crate::rule::utils::normalize;
 use fmt_runner::pipeline::{EditTarget, StructuredPass};
-use serde::de::DeserializeOwned;
-use serde::Serialize;
+use serde::{de::DeserializeOwned, Serialize};
 use std::cmp::Ordering;
+use std::marker::PhantomData;
 use tree_sitter::Node;
 
 
-pub struct ImportsPass;
+pub struct ImportsPass<C> {
+    _marker: PhantomData<C>,
+}
+
+impl<C> ImportsPass<C> {
+    pub fn new() -> Self {
+        Self {
+            _marker: PhantomData,
+        }
+    }
+}
 
 #[derive(Debug)]
 pub struct Import {
@@ -32,7 +42,6 @@ impl Import {
         } else {
             ImportGroup::NonJava
         };
-
         Self { content, group }
     }
 }
@@ -59,10 +68,11 @@ impl Ord for Import {
     }
 }
 
-impl<C> StructuredPass<C> for ImportsPass
+impl<C> StructuredPass for ImportsPass<C>
 where
     C: Serialize + DeserializeOwned + ImportConfigProvider,
 {
+    type Config = C;
     type Item = Import;
 
     fn find_targets(&self, root: &Node, source: &str) -> Vec<EditTarget<Self::Item>> {
@@ -90,7 +100,7 @@ where
         &self,
         _root: &Node,
         _source: &str,
-        config: &C,
+        config: &Self::Config,
         items: &mut Vec<Self::Item>,
     ) -> Result<(), String> {
         if config.import_config().sort {
@@ -104,10 +114,10 @@ where
         let mut prev_group = None;
 
         for imp in imports {
-            if let Some(group) = prev_group {
-                if imp.group != group {
-                    result.push(String::new());
-                }
+            if let Some(group) = prev_group
+                && imp.group != group
+            {
+                result.push(String::new());
             }
             result.push(imp.content.clone());
             prev_group = Some(imp.group);
