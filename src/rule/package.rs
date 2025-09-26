@@ -1,9 +1,8 @@
 use crate::rule::utils::normalize;
 use fmt_runner::pipeline::{EditTarget, StructuredPass};
-use serde::{de::DeserializeOwned, Serialize};
+use serde::{Serialize, de::DeserializeOwned};
 use std::marker::PhantomData;
 use tree_sitter::Node;
-
 
 pub struct PackagePass<C> {
     _marker: PhantomData<C>,
@@ -38,7 +37,7 @@ where
             .collect()
     }
 
-    fn build(&self, items: &[Self::Item]) -> String {
+    fn build(&self, _config: &Self::Config, items: &[Self::Item]) -> String {
         items.join("\n")
     }
 }

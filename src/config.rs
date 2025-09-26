@@ -1,6 +1,5 @@
 use serde::{Deserialize, Serialize};
 
-
 #[derive(Debug, Serialize, Deserialize, Clone, Copy, Default)]
 #[serde(default, deny_unknown_fields)]
 pub struct Config {
@@ -11,16 +10,21 @@ pub struct Config {
 #[serde(default, deny_unknown_fields)]
 pub struct ImportConfig {
     pub sort: bool,
+    pub grouped: bool,
 }
 
 impl Default for ImportConfig {
     fn default() -> Self {
-        Self { sort: true }
+        Self {
+            sort: true,
+            grouped: true,
+        }
     }
 }
 pub trait ImportConfigProvider {
     fn import_config(&self) -> &ImportConfig;
 }
+
 impl ImportConfigProvider for Config {
     fn import_config(&self) -> &ImportConfig {
         &self.import

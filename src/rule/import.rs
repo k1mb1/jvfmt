@@ -1,11 +1,10 @@
 use crate::config::ImportConfigProvider;
 use crate::rule::utils::normalize;
 use fmt_runner::pipeline::{EditTarget, StructuredPass};
-use serde::{de::DeserializeOwned, Serialize};
+use serde::{Serialize, de::DeserializeOwned};
 use std::cmp::Ordering;
 use std::marker::PhantomData;
 use tree_sitter::Node;
-
 
 pub struct ImportsPass<C> {
     _marker: PhantomData<C>,
@@ -109,15 +108,17 @@ where
         Ok(())
     }
 
-    fn build(&self, imports: &[Self::Item]) -> String {
+    fn build(&self, config: &Self::Config, imports: &[Self::Item]) -> String {
         let mut result = Vec::new();
         let mut prev_group = None;
 
         for imp in imports {
-            if let Some(group) = prev_group
-                && imp.group != group
-            {
-                result.push(String::new());
+            if config.import_config().grouped {
+                if let Some(group) = prev_group
+                    && imp.group != group
+                {
+                    result.push(String::new());
+                }
             }
             result.push(imp.content.clone());
             prev_group = Some(imp.group);
