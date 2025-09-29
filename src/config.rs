@@ -1,13 +1,13 @@
 use serde::{Deserialize, Serialize};
 
 #[derive(Debug, Serialize, Deserialize, Clone, Copy, Default)]
-#[serde(default, deny_unknown_fields)]
+#[serde(default)]
 pub struct Config {
     pub import: ImportConfig,
 }
 
 #[derive(Debug, Serialize, Deserialize, Clone, Copy)]
-#[serde(default, deny_unknown_fields)]
+#[serde(default)]
 pub struct ImportConfig {
     pub sort: bool,
     pub grouped: bool,
