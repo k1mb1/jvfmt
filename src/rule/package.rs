@@ -1,5 +1,6 @@
 use crate::rule::utils::normalize;
-use fmt_runner::pipeline::{EditTarget, StructuredPass};
+use fmt_runner::EditTarget;
+use fmt_runner::StructuredPass;
 use serde::{Serialize, de::DeserializeOwned};
 use std::marker::PhantomData;
 use tree_sitter::Node;

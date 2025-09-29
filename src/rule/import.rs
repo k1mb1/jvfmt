@@ -1,6 +1,6 @@
 use crate::config::ImportConfigProvider;
 use crate::rule::utils::normalize;
-use fmt_runner::pipeline::{EditTarget, StructuredPass};
+use fmt_runner::{EditTarget, StructuredPass};
 use serde::{Serialize, de::DeserializeOwned};
 use std::cmp::Ordering;
 use std::marker::PhantomData;
