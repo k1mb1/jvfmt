@@ -59,7 +59,7 @@ impl StructuredPass for ImportsPass {
     type Config = Config;
     type Item = Import;
 
-    fn find_targets(&self, root: &Node, source: &str) -> Vec<EditTarget<Self::Item>> {
+    fn extract(&self, root: &Node, source: &str) -> Vec<EditTarget<Self::Item>> {
         let mut cursor = root.walk();
         let ranges: Vec<_> = root
             .children(&mut cursor)

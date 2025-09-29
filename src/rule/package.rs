@@ -10,7 +10,7 @@ impl StructuredPass for PackagePass {
     type Config = Config;
     type Item = String;
 
-    fn find_targets(&self, root: &Node, source: &str) -> Vec<EditTarget<Self::Item>> {
+    fn extract(&self, root: &Node, source: &str) -> Vec<EditTarget<Self::Item>> {
         let mut cursor = root.walk();
         root.children(&mut cursor)
             .filter(|child| child.kind() == "package_declaration")
