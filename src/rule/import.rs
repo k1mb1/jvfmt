@@ -1,22 +1,10 @@
-use crate::config::ImportConfigProvider;
+use crate::config::{Config, ImportConfigProvider};
 use crate::rule::utils::normalize;
 use fmt_runner::{EditTarget, StructuredPass};
-use serde::{Serialize, de::DeserializeOwned};
 use std::cmp::Ordering;
-use std::marker::PhantomData;
 use tree_sitter::Node;
 
-pub struct ImportsPass<C> {
-    _marker: PhantomData<C>,
-}
-
-impl<C> ImportsPass<C> {
-    pub fn new() -> Self {
-        Self {
-            _marker: PhantomData,
-        }
-    }
-}
+pub struct ImportsPass;
 
 #[derive(Debug)]
 pub struct Import {
@@ -67,11 +55,8 @@ impl Ord for Import {
     }
 }
 
-impl<C> StructuredPass for ImportsPass<C>
-where
-    C: Serialize + DeserializeOwned + ImportConfigProvider,
-{
-    type Config = C;
+impl StructuredPass for ImportsPass {
+    type Config = Config;
     type Item = Import;
 
     fn find_targets(&self, root: &Node, source: &str) -> Vec<EditTarget<Self::Item>> {

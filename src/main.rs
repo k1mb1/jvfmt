@@ -9,7 +9,7 @@ use fmt_runner::cli_builder;
 
 fn main() {
     cli_builder::<Java, Config>()
-        .add_pass(PackagePass::new())
-        .add_pass(ImportsPass::new())
+        .add_pass(PackagePass)
+        .add_pass(ImportsPass)
         .run();
 }

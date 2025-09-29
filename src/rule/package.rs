@@ -1,27 +1,13 @@
+use crate::config::Config;
 use crate::rule::utils::normalize;
 use fmt_runner::EditTarget;
 use fmt_runner::StructuredPass;
-use serde::{Serialize, de::DeserializeOwned};
-use std::marker::PhantomData;
 use tree_sitter::Node;
 
-pub struct PackagePass<C> {
-    _marker: PhantomData<C>,
-}
+pub struct PackagePass;
 
-impl<C> PackagePass<C> {
-    pub fn new() -> Self {
-        Self {
-            _marker: PhantomData,
-        }
-    }
-}
-
-impl<C> StructuredPass for PackagePass<C>
-where
-    C: Serialize + DeserializeOwned,
-{
-    type Config = C;
+impl StructuredPass for PackagePass {
+    type Config = Config;
     type Item = String;
 
     fn find_targets(&self, root: &Node, source: &str) -> Vec<EditTarget<Self::Item>> {
