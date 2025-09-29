@@ -98,12 +98,11 @@ impl StructuredPass for ImportsPass {
         let mut prev_group = None;
 
         for imp in imports {
-            if config.import_config().grouped {
-                if let Some(group) = prev_group
-                    && imp.group != group
-                {
-                    result.push(String::new());
-                }
+            if config.import_config().grouped
+                && let Some(group) = prev_group
+                && imp.group != group
+            {
+                result.push(String::new());
             }
             result.push(imp.content.clone());
             prev_group = Some(imp.group);
